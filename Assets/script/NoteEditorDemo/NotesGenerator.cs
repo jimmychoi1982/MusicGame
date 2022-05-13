@@ -64,6 +64,17 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
     List<NoteEditorNote> key1NoteViewDataList;
     List<NoteEditorNote> key2NoteViewDataList;
 
+    [SerializeField] Animator touchBar0Anim;
+    [SerializeField] Animator touchBar1Anim;
+    [SerializeField] Animator touchBar2Anim;
+
+    [SerializeField] Transform touchBar0Parent;
+    [SerializeField] Transform touchBar1Parent;
+    [SerializeField] Transform touchBar2Parent;
+
+
+    [SerializeField] GameObject touchEffectPrefub;
+
     void Awake()
     {
         MusicReading(); // 数据读取成功
@@ -141,7 +152,7 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
             //ノーツ0の生成
             if (scoreBlock[beatCount] == (int)NoteType.Key0)
             {
-                obj.transform.localPosition = new Vector3(-146, noteStartPositionY, 0);
+                obj.transform.localPosition = new Vector3(-322, noteStartPositionY, 0);
                 obj.gameObject.SetActive(true);
                 obj.noteType = NoteType.Key0;
 
@@ -161,7 +172,7 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
             //ノーツ1の生成
             if (scoreBlock[beatCount] == (int)NoteType.Key2)
             {
-                obj.transform.localPosition = new Vector3(146, noteStartPositionY, 0);
+                obj.transform.localPosition = new Vector3(322, noteStartPositionY, 0);
                 obj.gameObject.SetActive(true);
                 obj.noteType = NoteType.Key2;
 
@@ -190,36 +201,69 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
         }
     }
 
+
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            var firstNoteObj = key0NoteViewDataList.First();
-            var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
-            if (distance <= 50)
+            touchBar0Anim.SetTrigger("Touch");
+
+            if (key0NoteViewDataList.Count > 0)
             {
-                RemoveNote(firstNoteObj);
-                Destroy(firstNoteObj.gameObject);
+                var firstNoteObj = key0NoteViewDataList.First();
+                var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
+                if (distance <= 50)
+                {
+                    RemoveNote(firstNoteObj);
+                    Destroy(firstNoteObj.gameObject);
+
+                    GameObject obj = Instantiate(touchEffectPrefub);
+                    obj.transform.position = touchBar0Parent.transform.position;
+                    obj.transform.localScale = Vector3.zero;
+                    obj.GetComponent<Animator>().Play(0);
+                }
+
+               
             }
         }
-        else if(Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.S))
         {
-            var firstNoteObj = key1NoteViewDataList.First();
-            var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
-            if (distance <= 50)
+            touchBar1Anim.SetTrigger("Touch");
+
+            if (key1NoteViewDataList.Count > 0)
             {
-                RemoveNote(firstNoteObj);
-                Destroy(firstNoteObj.gameObject);
+                var firstNoteObj = key1NoteViewDataList.First();
+                var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
+                if (distance <= 50)
+                {
+                    RemoveNote(firstNoteObj);
+                    Destroy(firstNoteObj.gameObject);
+
+                    GameObject obj = Instantiate(this.touchEffectPrefub);
+                    obj.transform.position = touchBar1Parent.transform.position;
+                    obj.transform.localScale = Vector3.zero;
+                    obj.GetComponent<Animator>().Play(0);
+                }
             }
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            var firstNoteObj = key2NoteViewDataList.First();
-            var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
-            if (distance <= 50)
+            touchBar2Anim.SetTrigger("Touch");
+
+            if (key2NoteViewDataList.Count > 0)
             {
-                RemoveNote(firstNoteObj);
-                Destroy(firstNoteObj.gameObject);
+                var firstNoteObj = key2NoteViewDataList.First();
+                var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
+                if (distance <= 50)
+                {
+                    RemoveNote(firstNoteObj);
+                    Destroy(firstNoteObj.gameObject);
+
+                    GameObject obj = Instantiate(touchEffectPrefub);
+                    obj.transform.position = touchBar2Parent.transform.position;
+                    obj.transform.localScale = Vector3.zero;
+                    obj.GetComponent<Animator>().Play(0);
+                }
             }
         }
     }
