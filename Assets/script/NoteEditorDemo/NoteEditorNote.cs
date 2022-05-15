@@ -26,7 +26,7 @@ public class NoteEditorNote : MonoBehaviour, IPointerDownHandler
 
     void MakeNotesMove()
     {
-        transform.position += new Vector3(0f, -notesSpeed, 0f);
+        transform.localPosition += new Vector3(0f, -notesSpeed, 0f);
         notesTime -= moveSpan;
     }
 
@@ -46,10 +46,10 @@ public class NoteEditorNote : MonoBehaviour, IPointerDownHandler
 
     void Update()
     {
-        if(this.transform.localPosition.y <= -Screen.height/2)
-        {
+        if(this.transform.localPosition.y <= NotesGenerator.Instance.GetJudgeBarPositionY())
             NotesGenerator.Instance.RemoveNote(this);
+
+        if(this.transform.localPosition.y <= -Screen.height/2)
             Destroy(this.gameObject);
-        }
     }
 }

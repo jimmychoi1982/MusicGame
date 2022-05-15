@@ -72,18 +72,25 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
     [SerializeField] Transform touchBar1Parent;
     [SerializeField] Transform touchBar2Parent;
 
-
     [SerializeField] GameObject touchEffectPrefub;
-
+    [SerializeField] float bgmDelayTime = 1.0f;
+    [SerializeField] float judgeTime = 50.0f;
+    
     void Awake()
     {
         MusicReading(); // 数据读取成功
 
         InvokeRepeating("NotesIns", 0f, moveSpan);
+        StartCoroutine("StartBGM");
 
         key0NoteViewDataList = new List<NoteEditorNote>();
         key1NoteViewDataList = new List<NoteEditorNote>();
         key2NoteViewDataList = new List<NoteEditorNote>();
+    }
+
+    public float GetJudgeBarPositionY()
+    {
+        return touchBar0Parent.transform.localPosition.y;
     }
 
     /// <summary>
@@ -106,13 +113,11 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
             //ノーツの種類を入れる(scoreBlock[i]はscoreNum[i]の種類)
             scoreBlock[i] = inputJson.notes[i].block;
         }
-
-        StartCoroutine("StartBGM");
     }
 
     IEnumerator StartBGM()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(bgmDelayTime);
         NoteSoundManager.Instance.PlayBGM();
     }
 
@@ -149,7 +154,6 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
         {
             var obj = Instantiate(notesPre, noteParent);
 
-            //ノーツ0の生成
             if (scoreBlock[beatCount] == (int)NoteType.Key0)
             {
                 obj.transform.localPosition = new Vector3(-322, noteStartPositionY, 0);
@@ -159,7 +163,6 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
                 key0NoteViewDataList.Add(obj);
             }
 
-            //ノーツ1の生成
             if (scoreBlock[beatCount] == (int)NoteType.Key1)
             {
                 obj.transform.localPosition = new Vector3(0, noteStartPositionY, 0);
@@ -169,7 +172,6 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
                 key1NoteViewDataList.Add(obj);
             }
 
-            //ノーツ1の生成
             if (scoreBlock[beatCount] == (int)NoteType.Key2)
             {
                 obj.transform.localPosition = new Vector3(322, noteStartPositionY, 0);
@@ -201,18 +203,15 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
         }
     }
 
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            touchBar0Anim.SetTrigger("Touch");
-
             if (key0NoteViewDataList.Count > 0)
             {
                 var firstNoteObj = key0NoteViewDataList.First();
                 var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
-                if (distance <= 50)
+                if (distance <= judgeTime)
                 {
                     RemoveNote(firstNoteObj);
                     Destroy(firstNoteObj.gameObject);
@@ -222,19 +221,15 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
                     obj.transform.localScale = Vector3.zero;
                     obj.GetComponent<Animator>().Play(0);
                 }
-
-               
             }
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            touchBar1Anim.SetTrigger("Touch");
-
             if (key1NoteViewDataList.Count > 0)
             {
                 var firstNoteObj = key1NoteViewDataList.First();
                 var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
-                if (distance <= 50)
+                if (distance <= judgeTime)
                 {
                     RemoveNote(firstNoteObj);
                     Destroy(firstNoteObj.gameObject);
@@ -248,13 +243,11 @@ public class NotesGenerator : SingletonMonoBehaviour<NotesGenerator>
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            touchBar2Anim.SetTrigger("Touch");
-
             if (key2NoteViewDataList.Count > 0)
             {
                 var firstNoteObj = key2NoteViewDataList.First();
                 var distance = Mathf.Abs(firstNoteObj.transform.localPosition.y - NoteJudgeBar.Instance.MyTransform.localPosition.y);
-                if (distance <= 50)
+                if (distance <= judgeTime)
                 {
                     RemoveNote(firstNoteObj);
                     Destroy(firstNoteObj.gameObject);
